@@ -270,53 +270,15 @@ Generate realistic dialog with authentic 10th-grade language:`;
         }
     }
 
-    generateAvatar(name, type) {
-        if (type === 'system') {
-            return '<img class="avatar system-avatar" src="https://api.dicebear.com/7.x/icons/svg?seed=school&backgroundColor=4a90e2" alt="System">';
-        } else if (type === 'teacher') {
-            return '<img class="avatar teacher-avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=teacher&accessories=prescription02&clothingGraphic=bear&eyeType=default&facialHairType=blank&hairColor=brown&hatColor=blue&mouthType=smile&skinColor=light&topType=shortHairShortFlat" alt="Teacher">';
-        } else {
-            // Generate consistent DiceBear avatar based on name
-            const styles = ['adventurer', 'avataaars', 'big-smile', 'bottts', 'croodles'];
-            const backgrounds = ['b6e3f4', 'c0aede', 'ffd93d', 'ffb3ba', 'bfea92', 'eca184'];
-            
-            // Use name to generate consistent parameters
-            let hash = 0;
-            for (let i = 0; i < name.length; i++) {
-                hash = name.charCodeAt(i) + ((hash << 5) - hash);
-            }
-            
-            const styleIndex = Math.abs(hash) % styles.length;
-            const bgIndex = Math.abs(hash * 2) % backgrounds.length;
-            const style = styles[styleIndex];
-            const backgroundColor = backgrounds[bgIndex];
-            
-            return `<img class="avatar student-avatar" src="https://api.dicebear.com/7.x/${style}/svg?seed=${encodeURIComponent(name)}&backgroundColor=${backgroundColor}" alt="${name}">`;
-        }
-    }
-
     renderDialog() {
         this.dialogMessages.innerHTML = '';
-        
         this.dialogHistory.forEach(message => {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${message.type}`;
-            
-            // Extract name for avatar generation
-            let name = message.type;
-            if (message.type === 'student' && message.content.includes(':')) {
-                const match = message.content.match(/^([^:]+):/);
-                if (match) name = match[1].trim();
-            } else if (message.type === 'teacher') {
-                name = 'Teacher';
-            }
-            
-            const avatar = this.generateAvatar(name, message.type);
-            messageDiv.innerHTML = `${avatar}<span class="message-content">${message.content}</span>`;
-            
+            // Only show message content, no avatar
+            messageDiv.innerHTML = `<span class="message-content">${message.content}</span>`;
             this.dialogMessages.appendChild(messageDiv);
         });
-
         this.dialogMessages.scrollTop = this.dialogMessages.scrollHeight;
     }
 
