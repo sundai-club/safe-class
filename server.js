@@ -44,11 +44,16 @@ app.post('/api/gemini', async (req, res) => {
                             text: prompt
                         }]
                     }],
+                    systemInstruction: type === 'hint' ? {
+                        parts: [{
+                            text: "You are a concise educational assistant. Provide brief, actionable advice in 1-2 sentences. Do not overthink or provide lengthy explanations."
+                        }]
+                    } : undefined,
                     generationConfig: {
                         temperature: type === 'hint' ? 0.5 : 0.7,
                         topK: 40,
                         topP: 0.95,
-                        maxOutputTokens: type === 'hint' ? 100 : 1024,
+                        maxOutputTokens: 1024,
                     }
                 })
             }
