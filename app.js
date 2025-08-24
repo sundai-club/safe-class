@@ -270,8 +270,20 @@ Generate realistic dialog with authentic 10th-grade language:`;
         this.dialogHistory.forEach(message => {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${message.type}`;
-            // Only show message content, no avatar
-            messageDiv.innerHTML = `<span class="message-content">${message.content}</span>`;
+            let avatarName = '';
+            if (message.type === 'teacher') {
+                avatarName = 'teacher';
+            } else if (message.type === 'student' && message.content.includes(':')) {
+                const match = message.content.match(/^([A-Za-z]+):/);
+                if (match) avatarName = match[1].toLowerCase();
+            } else if (message.type === 'system') {
+                avatarName = '';
+            }
+            let avatarImg = '';
+            if (avatarName) {
+                avatarImg = `<img class="avatar" src="img/${avatarName}_avatar.png" alt="${avatarName} avatar">`;
+            }
+            messageDiv.innerHTML = `${avatarImg}<span class="message-content">${message.content}</span>`;
             this.dialogMessages.appendChild(messageDiv);
         });
         this.dialogMessages.scrollTop = this.dialogMessages.scrollHeight;

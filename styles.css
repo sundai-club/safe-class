@@ -171,6 +171,8 @@ header p {
 }
 
 .message {
+    display: flex;
+    align-items: center;
     padding: 12px 16px;
     border-radius: 8px;
     max-width: 80%;
@@ -194,6 +196,23 @@ header p {
     align-self: center;
     text-align: center;
     font-style: italic;
+}
+
+.avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-right: 8px;
+    vertical-align: middle;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+}
+
+.message-content {
+    display: inline-block;
+    vertical-align: middle;
+    word-break: break-word;
 }
 
 .response-area {
@@ -441,6 +460,7 @@ button:disabled {
 .message-content {
     display: inline-block;
     vertical-align: middle;
+    word-break: break-word;
 }
 
 #info-section {
