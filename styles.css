@@ -155,7 +155,7 @@ header p {
     border-radius: 10px;
     padding: 20px;
     border: 2px solid #e9ecef;
-    max-height: 300px;
+    max-height: 450px;
     overflow-y: auto;
 }
 
@@ -463,28 +463,6 @@ button:disabled {
     word-break: break-word;
 }
 
-#info-section {
-    background: #f8f9fa;
-    padding: 20px;
-    border-top: 2px solid #e9ecef;
-}
-
-.info-card {
-    background: white;
-    border-radius: 8px;
-    padding: 20px;
-    border: 2px solid #e9ecef;
-}
-
-.info-card h3 {
-    color: #2c3e50;
-    margin-bottom: 10px;
-}
-
-.info-card p {
-    color: #495057;
-    margin: 0;
-}
 
 @media (max-width: 768px) {
     #game-area {
