@@ -81,29 +81,35 @@ header p {
 .scenario-content {
     display: flex;
     gap: 20px;
-    align-items: flex-start;
+    align-items: stretch;
 }
 
 .scenario-card {
-    flex: 1;
+    flex: 1 1 50%;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
 }
 
-.hero-image {
-    flex: 0 0 300px;
+.situation-image {
+    flex: 1 1 50%;
+    min-width: 0;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
+    align-items: stretch;
 }
 
-.hero-image img {
+.situation-image img {
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: cover;
     border-radius: 10px;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.hero-image img:hover {
+.situation-image img:hover {
     transform: translateY(-5px);
     box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
 }
