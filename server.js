@@ -32,7 +32,7 @@ app.post('/api/gemini', async (req, res) => {
         }
 
         const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${GEMINI_API_KEY}`,
             {
                 method: 'POST',
                 headers: {
@@ -44,11 +44,6 @@ app.post('/api/gemini', async (req, res) => {
                             text: prompt
                         }]
                     }],
-                    systemInstruction: type === 'hint' ? {
-                        parts: [{
-                            text: "You are a concise educational assistant. Provide brief, actionable advice in 1-2 sentences. Do not overthink or provide lengthy explanations."
-                        }]
-                    } : undefined,
                     generationConfig: {
                         temperature: type === 'hint' ? 0.5 : 0.7,
                         topK: 40,

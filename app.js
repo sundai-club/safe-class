@@ -282,14 +282,12 @@ Response format: [Student name]: "[response]"
         
         try {
             const scenario = this.scenarios[this.currentScenario];
-            const prompt = `
-Give a helpful hint for handling this classroom violence situation:
+            const prompt = `Give a brief hint for this classroom violence situation:
 
 SCENARIO: ${scenario.title}
 DESCRIPTION: ${scenario.description}
 
-Provide one specific, actionable tip that a teacher could use right now. Focus on immediate de-escalation techniques. Keep it under 30 words.
-            `;
+Provide ONE specific, actionable tip in 1-2 sentences. Be concise and focus on immediate de-escalation.`;
             
             const result = await this.callBackendAPI(prompt, 'hint');
             this.showMessage(`💡 Hint: ${result.response}`, 'info');
