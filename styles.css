@@ -78,6 +78,36 @@ header p {
     grid-column: 1 / -1;
 }
 
+.scenario-content {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.scenario-card {
+    flex: 1;
+}
+
+.hero-image {
+    flex: 0 0 300px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.hero-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hero-image img:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+}
+
 .scenario-card, .feedback-card, .progress-card {
     background: #f8f9fa;
     border-radius: 10px;
@@ -399,6 +429,35 @@ button:disabled {
     display: none !important;
 }
 
+/* Avatar styling */
+.avatar {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-right: 8px;
+    vertical-align: middle;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.student-avatar {
+    border-color: rgba(74, 144, 226, 0.3);
+}
+
+.teacher-avatar {
+    border-color: rgba(76, 175, 80, 0.5);
+}
+
+.system-avatar {
+    border-color: rgba(255, 152, 0, 0.5);
+}
+
+.message-content {
+    display: inline-block;
+    vertical-align: middle;
+}
+
 #info-section {
     background: #f8f9fa;
     padding: 20px;
@@ -426,6 +485,18 @@ button:disabled {
     #game-area {
         grid-template-columns: 1fr;
         padding: 20px;
+    }
+    
+    .scenario-content {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .hero-image {
+        flex: none;
+        width: 100%;
+        max-width: 300px;
+        order: -1;
     }
     
     header {
