@@ -104,11 +104,15 @@ class SafeClassSimulation {
             if (isRecording) {
                 this.audioRecordLabel.textContent = 'Stop';
                 if (iconSVG) {
+        // Timeout/attempt tracking
+        this.attemptCount = 0;
+        this.timeoutId = null;
+        this.timedOut = false;
+        this.firstInteraction = false;
                     // Stop icon: filled square
                     iconSVG.innerHTML = '<rect width="24" height="24" fill="none"/><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/>';
                 }
             } else {
-                this.audioRecordLabel.textContent = 'Speak';
                 if (iconSVG) {
                     // Microphone icon
                     iconSVG.innerHTML = '<rect width="24" height="24" fill="none"/><path d="M12 16a4 4 0 0 0 4-4V7a4 4 0 1 0-8 0v5a4 4 0 0 0 4 4Zm5-4a1 1 0 1 1 2 0 7 7 0 0 1-6 6.92V21a1 1 0 1 1-2 0v-2.08A7 7 0 0 1 5 12a1 1 0 1 1 2 0 5 5 0 0 0 10 0Z" fill="currentColor"/>';
@@ -136,6 +140,27 @@ class SafeClassSimulation {
 
     async startScenario(index) {
         if (index >= this.scenarios.length) {
+        if (this.timedOut) {
+            this.showMessage('Scenario timed out. Please proceed to the next scenario.', 'error');
+            return;
+        }
+        // Start timeout on first interaction
+        if (!this.firstInteraction) {
+            this.firstInteraction = true;
+            this.timeoutId = setTimeout(() => {
+                this.timedOut = true;
+                this.showMessage('⏰ Scenario timed out after 5 minutes.', 'error');
+                this.endScenarioDueToTimeout();
+            }, 5 * 60 * 1000); // 5 minutes
+        }
+        this.attemptCount++;
+        if (this.attemptCount >= 5) {
+            this.timedOut = true;
+            if (this.timeoutId) clearTimeout(this.timeoutId);
+            this.showMessage('⏰ Scenario ended after 5 attempts.', 'error');
+            this.endScenarioDueToTimeout();
+            return;
+        }
             this.showCompletionSummary();
             return;
         }
@@ -175,8 +200,20 @@ class SafeClassSimulation {
 
     async generateInitialDialog(scenario) {
         const prompt = `Based on this classroom violence scenario, generate initial dialog for a teacher training simulation featuring 10th-grade students (15-16 years old).
+        // Reset timeout/attempt tracking for new scenario
+        this.attemptCount = 0;
+        this.timedOut = false;
+        this.firstInteraction = false;
+        if (this.timeoutId) clearTimeout(this.timeoutId);
 
 SCENARIO: ${scenario.description}
+    endScenarioDueToTimeout() {
+        // Disable input and show summary or next scenario button
+        this.teacherResponse.disabled = true;
+        this.submitButton.disabled = true;
+        this.feedbackContent.innerHTML += '<br><strong>Scenario ended due to timeout or max attempts.</strong>';
+        this.nextScenarioButton.style.display = 'inline-block';
+    }
 
 Generate 3-5 initial messages showing the conflict progression. Use authentic Gen-Z language that's school-appropriate but reflects how teenagers actually speak:
 
@@ -284,11 +321,33 @@ Generate realistic dialog with authentic 10th-grade language:`;
     }
 
     async handleSubmitResponse() {
+        if (this.timedOut) {
+            this.showMessage('Scenario timed out. Please proceed to the next scenario.', 'error');
+            return;
+        }
+        // Count attempt BEFORE processing
+        this.attemptCount = (this.attemptCount || 0) + 1;
+        if (this.attemptCount > 5) {
+            this.timedOut = true;
+            if (this.timeoutId) clearTimeout(this.timeoutId);
+            this.showMessage('⏰ Scenario ended after 5 attempts.', 'error');
+            this.endScenarioDueToTimeout();
+            return;
+        }
         const response = this.teacherResponse.value.trim();
-        
         if (!response) {
             this.showMessage('Please enter your response first.', 'error');
             return;
+        }
+
+        // Start timeout on first interaction
+        if (!this.firstInteraction) {
+            this.firstInteraction = true;
+            this.timeoutId = setTimeout(() => {
+                this.timedOut = true;
+                this.showMessage('⏰ Scenario timed out after 5 minutes.', 'error');
+                this.endScenarioDueToTimeout();
+            }, 5 * 60 * 1000); // 5 minutes
         }
 
         this.addTeacherMessage(response);
@@ -298,20 +357,16 @@ Generate realistic dialog with authentic 10th-grade language:`;
         try {
             const feedback = await this.getAIFeedback(response);
             const studentResponse = await this.generateStudentResponse(response);
-            
             this.displayFeedback(feedback.response);
-            
             if (studentResponse && studentResponse.response && studentResponse.response.trim()) {
                 setTimeout(() => {
                     this.addStudentMessage(studentResponse.response);
                 }, 1000);
             }
-            
         } catch (error) {
             console.error('Error getting AI feedback:', error);
             this.showMessage('Error communicating with AI service.', 'error');
         }
-
         this.showLoading(false);
     }
 
