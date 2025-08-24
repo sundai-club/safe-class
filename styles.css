@@ -242,6 +242,31 @@ button:disabled {
     border-left: 4px solid #ff9800;
 }
 
+/* Markdown formatting in feedback */
+#feedback-content strong {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+#feedback-content em {
+    font-style: italic;
+    color: #34495e;
+}
+
+#feedback-content ul {
+    margin: 10px 0;
+    padding-left: 20px;
+}
+
+#feedback-content li {
+    margin: 5px 0;
+    line-height: 1.4;
+}
+
+#feedback-content br {
+    margin: 5px 0;
+}
+
 .progress-bar {
     background: #e9ecef;
     border-radius: 20px;

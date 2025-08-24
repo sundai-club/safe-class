@@ -299,8 +299,27 @@ Response format: [Student name]: "[response]"
         return await response.json();
     }
 
+    parseMarkdown(text) {
+        return text
+            // Bold text (**bold** or __bold__)
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/__(.*?)__/g, '<strong>$1</strong>')
+            // Italic text (*italic* or _italic_)
+            .replace(/\*(.*?)\*/g, '<em>$1</em>')
+            .replace(/_(.*?)_/g, '<em>$1</em>')
+            // Line breaks
+            .replace(/\n/g, '<br>')
+            // Numbered lists (simple)
+            .replace(/^\d+\.\s+(.*)$/gm, '<li>$1</li>')
+            // Bullet points
+            .replace(/^[-*]\s+(.*)$/gm, '<li>$1</li>')
+            // Wrap consecutive list items in ul
+            .replace(/(<li>.*<\/li>\s*)+/gs, '<ul>$&</ul>');
+    }
+
     displayFeedback(feedback) {
-        this.feedbackContent.textContent = feedback;
+        const htmlFeedback = this.parseMarkdown(feedback);
+        this.feedbackContent.innerHTML = htmlFeedback;
         
         const scoreMatch = feedback.match(/SCORE:\s*(\d+)/i);
         if (scoreMatch) {
