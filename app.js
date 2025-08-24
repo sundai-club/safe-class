@@ -41,11 +41,11 @@ class SafeClassSimulation {
             {
                 id: 1,
                 title: "Playground Fight",
-                description: "Two students, Jake and Maria, are having a heated argument that's escalating toward physical violence. Jake just pushed Maria, and she's preparing to hit back. Other students are gathering around, some encouraging the fight.",
+                description: "Two students, Alex and Jordan, are having a heated argument that's escalating toward physical violence. Jordan just pushed Alex, and they're preparing to hit back. Other students are gathering around, some encouraging the fight.",
                 initialDialog: [
                     { type: 'system', content: 'You notice the situation developing during recess supervision.' },
-                    { type: 'student', content: 'Jake: "You can\'t tell me what to do! Mind your own business!"' },
-                    { type: 'student', content: 'Maria: "Don\'t you dare push me again! I\'ll make you sorry!"' }
+                    { type: 'student', content: 'Jordan: "You can\'t tell me what to do! Mind your own business!"' },
+                    { type: 'student', content: 'Alex: "Don\'t you dare push me again! I\'ll make you sorry!"' }
                 ],
                 context: "This is a common playground conflict that needs immediate de-escalation before it becomes physical violence."
             },
@@ -66,22 +66,22 @@ class SafeClassSimulation {
             {
                 id: 3,
                 title: "Cafeteria Incident",
-                description: "During lunch supervision, you notice Sam deliberately knocking over another student's lunch tray and making threatening gestures. The victim, Taylor, is visibly upset and other students are starting to take sides.",
+                description: "During lunch supervision, you notice Jordan deliberately knocking over another student's lunch tray and making threatening gestures. The victim, Alex, is visibly upset and other students are starting to take sides.",
                 initialDialog: [
                     { type: 'system', content: 'You approach the cafeteria table where the incident occurred.' },
-                    { type: 'student', content: 'Sam: "Oops, sorry about your lunch, Taylor. Maybe next time watch where you\'re going."' },
-                    { type: 'student', content: 'Taylor: "You did that on purpose! That was my only lunch!"' }
+                    { type: 'student', content: 'Jordan: "Oops, sorry about your lunch, Alex. Maybe next time watch where you\'re going."' },
+                    { type: 'student', content: 'Alex: "You did that on purpose! That was my only lunch!"' }
                 ],
                 context: "This appears to be bullying behavior that could escalate to physical confrontation."
             },
             {
                 id: 4,
                 title: "After-School Confrontation",
-                description: "You're supervising after-school activities when you see Jordan cornering Casey near the lockers, speaking in aggressive tones and making intimidating gestures. Casey looks scared and trapped.",
+                description: "You're supervising after-school activities when you see Jordan cornering Alex near the lockers, speaking in aggressive tones and making intimidating gestures. Alex looks scared and trapped.",
                 initialDialog: [
                     { type: 'system', content: 'You witness this confrontation while walking down the hallway.' },
                     { type: 'student', content: 'Jordan: "You better have my money tomorrow, or you\'ll regret it."' },
-                    { type: 'student', content: 'Casey: "I... I don\'t have it yet. My parents said..."' }
+                    { type: 'student', content: 'Alex: "I... I don\'t have it yet. My parents said..."' }
                 ],
                 context: "This appears to be a serious intimidation situation that could involve extortion and threats of violence."
             },
