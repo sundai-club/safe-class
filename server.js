@@ -7,7 +7,14 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(helmet());
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+            "img-src": ["'self'", "data:", "https://api.dicebear.com"]
+        }
+    }
+}));
 app.use(cors());
 app.use(morgan('combined'));
 app.use(express.json());
