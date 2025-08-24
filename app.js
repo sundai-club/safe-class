@@ -21,9 +21,6 @@ class SafeClassSimulation {
         this.hintButton = document.getElementById('get-hint');
         this.nextScenarioButton = document.getElementById('next-scenario');
         this.feedbackContent = document.getElementById('feedback-content');
-        this.progressFill = document.getElementById('progress-fill');
-        this.scenariosCompleted = document.getElementById('scenarios-completed');
-        this.averageScore = document.getElementById('average-score');
         this.loading = document.getElementById('loading');
         // Audio input elements (must be set after DOM is ready)
         this.audioRecordButton = document.getElementById('audio-record');
@@ -194,8 +191,6 @@ class SafeClassSimulation {
         
         this.teacherResponse.value = '';
         this.feedbackContent.textContent = 'Analyze the situation carefully. What would be your first response?';
-        
-        this.updateProgress();
     }
 
     async generateInitialDialog(scenario) {
@@ -464,29 +459,26 @@ Sum all 5 criteria scores for the overall percentage (out of 100%).
         const dialogContext = this.dialogHistory.slice(0, -1).map(msg => msg.content).join('\n');
         
         const prompt = `
-You are role-playing as 10th-grade students (15-16 years old) in this classroom violence scenario. Use authentic Gen-Z language that's appropriate for school but reflects how teenagers actually speak today.
+You are Alex and Jordan, two 10th-grade students (15-16 years old) in a classroom conflict. Respond to the teacher's intervention with realistic reactions.
 
 SCENARIO: ${scenario.title}
 DESCRIPTION: ${scenario.description}
 
-DIALOG SO FAR:
+CONVERSATION SO FAR:
 ${dialogContext}
 
 The teacher just said: "${teacherResponse}"
 
-Generate realistic responses from the students involved. Use natural 10th-grade language including:
-- Casual contractions ("That's so..." "I'm not gonna..." "He's being...")
-- Mild expressions of frustration ("This is ridiculous" "Whatever" "Seriously?")
-- Age-appropriate slang ("That's cap" "No way" "For real?" "That's actually crazy")
-- Natural speech patterns teens use when stressed or emotional
+Generate one realistic response from ONLY Alex OR Jordan (not both, just one of them). The response should:
+- Be 1-2 sentences maximum
+- Use natural teenage language but school-appropriate
+- Show how a 15-16 year old would actually react to the teacher's words
+- Include casual contractions and mild expressions when frustrated
+- Reflect whether they're defensive, apologetic, still angry, or calming down
 
-Consider:
-- Are they calming down or still agitated?
-- How would they realistically react to this teacher approach?
-- Keep it school-appropriate but authentic to how 15-16 year olds actually talk
-- 1-2 sentences from the main students involved
+Choose either Alex or Jordan to respond based on who would most naturally react to what the teacher said.
 
-Response format: [Student name]: "[response]"
+Response format: [Alex]: "[response]" OR [Jordan]: "[response]" (pick one)
         `;
 
         return await this.callBackendAPI(prompt, 'student');
@@ -546,8 +538,6 @@ Response format: [Student name]: "[response]"
             } else {
                 this.feedbackContent.className = 'feedback-negative';
             }
-            
-            this.updateProgress();
         }
     }
 
@@ -639,18 +629,6 @@ Provide ONE specific, actionable tip in 1-2 sentences. Be concise and focus on i
         return 'Needs Improvement 📚';
     }
 
-    updateProgress() {
-        const responsesGiven = this.scores.length;
-        const percentage = Math.min((responsesGiven / 10) * 100, 100); // Progress based on responses given
-        
-        this.progressFill.style.width = `${percentage}%`;
-        this.scenariosCompleted.textContent = `${responsesGiven}`;
-        
-        if (this.scores.length > 0) {
-            const average = (this.scores.reduce((sum, score) => sum + score, 0) / this.scores.length).toFixed(0);
-            this.averageScore.textContent = `${average}%`;
-        }
-    }
 
     showLoading(show) {
         this.loading.classList.toggle('hidden', !show);
