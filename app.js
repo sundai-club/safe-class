@@ -4,7 +4,10 @@ class SafeClassSimulation {
         this.scenarios = [];
         this.dialogHistory = [];
         this.scores = [];
-        
+
+        this.speechRecognition = null;
+        this.isRecording = false;
+
         this.initializeElements();
         this.bindEvents();
         this.loadScenarios();
@@ -22,18 +25,73 @@ class SafeClassSimulation {
         this.scenariosCompleted = document.getElementById('scenarios-completed');
         this.averageScore = document.getElementById('average-score');
         this.loading = document.getElementById('loading');
+        // Audio input elements (must be set after DOM is ready)
+        this.audioRecordButton = document.getElementById('audio-record');
+        this.audioStatus = document.getElementById('audio-status');
     }
 
     bindEvents() {
         this.submitButton.addEventListener('click', () => this.handleSubmitResponse());
         this.hintButton.addEventListener('click', () => this.getHint());
         this.nextScenarioButton.addEventListener('click', () => this.nextScenario());
-        
+
         this.teacherResponse.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && e.ctrlKey) {
                 this.handleSubmitResponse();
             }
         });
+
+        // Audio record button event
+        if (this.audioRecordButton) {
+            this.audioRecordButton.addEventListener('click', () => this.toggleAudioRecording());
+            // Cache the span for label updates
+            this.audioRecordLabel = this.audioRecordButton.querySelector('span');
+        }
+    }
+
+    toggleAudioRecording() {
+        if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+            this.showMessage('Speech recognition is not supported in this browser.', 'error');
+            return;
+        }
+
+        if (!this.speechRecognition) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            this.speechRecognition = new SpeechRecognition();
+            this.speechRecognition.lang = 'en-US';
+            this.speechRecognition.interimResults = true;
+            this.speechRecognition.maxAlternatives = 1;
+
+            this.speechRecognition.onstart = () => {
+                this.isRecording = true;
+                if (this.audioStatus) this.audioStatus.style.display = 'inline';
+            };
+            this.speechRecognition.onend = () => {
+                this.isRecording = false;
+                if (this.audioStatus) this.audioStatus.style.display = 'none';
+                if (this.teacherResponse.value.trim()) {
+                    this.handleSubmitResponse();
+                }
+            };
+            this.speechRecognition.onerror = (event) => {
+                this.isRecording = false;
+                if (this.audioStatus) this.audioStatus.style.display = 'none';
+                this.showMessage('Speech recognition error: ' + event.error, 'error');
+            };
+            this.speechRecognition.onresult = (event) => {
+                let interimTranscript = '';
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    interimTranscript += event.results[i][0].transcript;
+                }
+                this.teacherResponse.value = interimTranscript;
+            };
+        }
+
+        if (!this.isRecording) {
+            this.speechRecognition.start();
+        } else {
+            this.speechRecognition.stop();
+        }
     }
 
     loadScenarios() {

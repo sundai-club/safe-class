@@ -30,7 +30,14 @@
                 </div>
 
                 <div class="response-area">
-                    <h3>Your Response</h3>
+                    <div class="response-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                        <h3 style="margin: 0;">Your Response</h3>
+                        <button id="audio-record" title="Speak your response" type="button">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><rect width="24" height="24" fill="none"/><path d="M12 16a4 4 0 0 0 4-4V7a4 4 0 1 0-8 0v5a4 4 0 0 0 4 4Zm5-4a1 1 0 1 1 2 0 7 7 0 0 1-6 6.92V21a1 1 0 1 1-2 0v-2.08A7 7 0 0 1 5 12a1 1 0 1 1 2 0 5 5 0 0 0 10 0Z"/></svg>
+                            <span style="font-size: 1em; font-weight: 500;">Speak</span>
+                        </button>
+                        <span id="audio-status" style="margin-left: 10px; color: #4a90e2; display: none;">Listening...</span>
+                    </div>
                     <textarea id="teacher-response" placeholder="Type your response to the situation..."></textarea>
                     <div class="action-buttons">
                         <button id="submit-response">Submit Response</button>
