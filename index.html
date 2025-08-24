@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safe Class - Violence De-escalation Training</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Safe Class Training Simulation</h1>
+            <p>Practice handling classroom violence situations with AI-powered feedback</p>
+        </header>
+
+        <div id="game-area">
+            <div id="scenario-section">
+                <div class="scenario-card">
+                    <h2>Current Situation</h2>
+                    <div id="scenario-description">
+                        Loading scenario...
+                    </div>
+                </div>
+            </div>
+
+            <div id="dialog-section">
+                <div class="dialog-history">
+                    <h3>Conversation</h3>
+                    <div id="dialog-messages"></div>
+                </div>
+
+                <div class="response-area">
+                    <h3>Your Response</h3>
+                    <textarea id="teacher-response" placeholder="Type your response to the situation..."></textarea>
+                    <div class="action-buttons">
+                        <button id="submit-response">Submit Response</button>
+                        <button id="get-hint">Get Hint</button>
+                        <button id="next-scenario">Next Scenario</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="feedback-section">
+                <div class="feedback-card">
+                    <h3>AI Feedback</h3>
+                    <div id="feedback-content">
+                        Your feedback will appear here after each response...
+                    </div>
+                </div>
+            </div>
+
+            <div id="progress-section">
+                <div class="progress-card">
+                    <h3>Training Progress</h3>
+                    <div class="progress-bar">
+                        <div id="progress-fill" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-stats">
+                        <span>Scenarios Completed: <span id="scenarios-completed">0</span>/5</span>
+                        <span>Average Score: <span id="average-score">--</span>%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="loading" class="hidden">
+            <div class="spinner"></div>
+            <p>AI is analyzing your response...</p>
+        </div>
+
+        <div id="info-section">
+            <div class="info-card">
+                <h3>Server Status</h3>
+                <p>Using secure backend API for AI processing</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
