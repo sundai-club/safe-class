@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: safe-class
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: GEMINI_API_KEY
+        sync: false

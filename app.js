@@ -51,14 +51,17 @@ class SafeClassSimulation {
             },
             {
                 id: 2,
-                title: "Classroom Disruption",
-                description: "During math class, Alex becomes frustrated with a difficult problem and throws their textbook across the room, nearly hitting another student. Alex stands up aggressively and appears ready to lash out further.",
+                title: "History Class Fight",
+                description: "It is third period in a 10th-grade history class. You are midway through a lecture when two students, Alex and Jordan, begin arguing about their group project. The tension escalates quickly. Jordan pushes his chair back and walks across the room. Alex stands, ready to confront him. Within seconds, Jordan shoves Alex, and Alex swings a fist in response. The room erupts—students are shouting, some standing on chairs, a few pulling out their phones to record. Papers scatter, desks shift, and the atmosphere feels chaotic. You are at the front of the classroom. The fight is happening near the back, and your students are looking to you.",
                 initialDialog: [
-                    { type: 'system', content: 'You\'re teaching when this disruption occurs in front of the whole class.' },
-                    { type: 'student', content: 'Alex: "This is stupid! I hate this class and I hate this school!"' },
-                    { type: 'student', content: 'Another student: "Hey! That almost hit me!"' }
+                    { type: 'system', content: 'You are midway through your history lecture when the argument begins.' },
+                    { type: 'student', content: 'Jordan: "You didn\'t even do your part. We had to cover for you."' },
+                    { type: 'student', content: 'Alex: "That\'s not true! At least I showed up—unlike you."' },
+                    { type: 'system', content: 'Jordan pushes his chair back and walks across the room. Alex stands up.' },
+                    { type: 'system', content: 'Jordan shoves Alex. Alex swings back. The room erupts in chaos.' },
+                    { type: 'student', content: 'Multiple students: "Fight! Fight!" "Someone record this!" "Oh my god!"' }
                 ],
-                context: "Academic frustration has boiled over into potential violence. The whole class is watching your response."
+                context: "A full physical altercation has erupted in your classroom during instruction. Students are recording, chaos has taken over, and immediate intervention is critical for safety."
             },
             {
                 id: 3,
