@@ -342,7 +342,7 @@ Generate realistic dialog with authentic 10th-grade language:`;
         const dialogContext = this.dialogHistory.map(msg => msg.content).join('\n');
         
         const prompt = `
-You are an expert in classroom management and de-escalation techniques. A teacher is practicing handling a violence situation in a simulation.
+You are an expert in classroom crisis management evaluating a teacher's response to classroom violence. Rate the teacher's response against these 5 specific criteria:
 
 SCENARIO: ${scenario.title}
 DESCRIPTION: ${scenario.description}
@@ -353,15 +353,46 @@ ${dialogContext}
 
 TEACHER'S LATEST RESPONSE: "${teacherResponse}"
 
-Please provide constructive feedback on the teacher's response, considering:
-1. Safety first - Did they prioritize everyone's physical safety?
-2. De-escalation techniques - Did they use appropriate language and tone?
-3. Authority and control - Did they establish appropriate boundaries?
-4. Empathy and understanding - Did they acknowledge student emotions?
-5. Next steps - What should they do next?
+Evaluate the teacher's response using these exact criteria:
 
-Provide specific, actionable feedback in 2-3 sentences. Rate the response from 1-10 and explain why.
-Format: SCORE: [number]/10 - [feedback]
+**1. Safety & Crisis Protocols**
+- EXEMPLARY: Prioritizes safety, clear directions, calls for help immediately
+- MEETS EXPECTATIONS: Addresses safety but less decisive
+- ROOM FOR IMPROVEMENT: Ignores protocols or handles alone
+
+**2. De-escalation & Communication**
+- EXEMPLARY: Uses calm, empathetic language that validates emotions
+- MEETS EXPECTATIONS: Basic calm communication
+- ROOM FOR IMPROVEMENT: Harsh, dismissive, or confrontational language
+
+**3. Classroom Management & Bystanders**
+- EXEMPLARY: Clear directions to other students to stay seated/quiet
+- MEETS EXPECTATIONS: Some attempt to manage the class
+- ROOM FOR IMPROVEMENT: No management of bystanders
+
+**4. Adherence to Policy & Ethical Standards**
+- EXEMPLARY: Follows proper documentation and administrative protocols
+- MEETS EXPECTATIONS: Mentions involving administration
+- ROOM FOR IMPROVEMENT: Threatens inappropriate consequences
+
+**5. Professionalism & Emotional Regulation**
+- EXEMPLARY: Maintains calm, steady, professional demeanor
+- MEETS EXPECTATIONS: Controlled but may show some stress
+- ROOM FOR IMPROVEMENT: Loses composure, sarcastic, or unprofessional
+
+Format your response exactly like this:
+
+**CRITERIA EVALUATION:**
+
+1. **Safety & Crisis Protocols:** [EXEMPLARY/MEETS EXPECTATIONS/ROOM FOR IMPROVEMENT]
+2. **De-escalation & Communication:** [EXEMPLARY/MEETS EXPECTATIONS/ROOM FOR IMPROVEMENT]  
+3. **Classroom Management & Bystanders:** [EXEMPLARY/MEETS EXPECTATIONS/ROOM FOR IMPROVEMENT]
+4. **Adherence to Policy & Ethical Standards:** [EXEMPLARY/MEETS EXPECTATIONS/ROOM FOR IMPROVEMENT]
+5. **Professionalism & Emotional Regulation:** [EXEMPLARY/MEETS EXPECTATIONS/ROOM FOR IMPROVEMENT]
+
+**OVERALL SCORE:** [number]/10
+
+**FEEDBACK:** [2-3 sentences of specific, actionable feedback]
         `;
 
         return await this.callBackendAPI(prompt, 'feedback');
@@ -439,12 +470,12 @@ Response format: [Student name]: "[response]"
     }
 
     displayFeedback(feedback) {
-        const htmlFeedback = this.parseMarkdown(feedback);
-        this.feedbackContent.innerHTML = htmlFeedback;
+        const enhancedFeedback = this.processCriteriaFeedback(feedback);
+        this.feedbackContent.innerHTML = enhancedFeedback;
         
-        const scoreMatch = feedback.match(/SCORE:\s*(\d+)/i);
+        const scoreMatch = feedback.match(/OVERALL SCORE:\s*(\d+)|SCORE:\s*(\d+)/i);
         if (scoreMatch) {
-            const score = parseInt(scoreMatch[1]);
+            const score = parseInt(scoreMatch[1] || scoreMatch[2]);
             this.scores.push(score);
             
             if (score >= 8) {
@@ -457,6 +488,26 @@ Response format: [Student name]: "[response]"
             
             this.updateProgress();
         }
+    }
+
+    processCriteriaFeedback(feedback) {
+        // First apply markdown parsing
+        let html = this.parseMarkdown(feedback);
+        
+        // Add color-coded status indicators for criteria evaluations
+        const criteriaMap = {
+            'EXEMPLARY': '<span class="criteria-status criteria-exemplary">● EXEMPLARY</span>',
+            'MEETS EXPECTATIONS': '<span class="criteria-status criteria-meets">● MEETS EXPECTATIONS</span>',
+            'ROOM FOR IMPROVEMENT': '<span class="criteria-status criteria-improvement">● ROOM FOR IMPROVEMENT</span>'
+        };
+        
+        // Replace criteria evaluations with color-coded versions
+        Object.keys(criteriaMap).forEach(criteria => {
+            const regex = new RegExp(`\\b${criteria}\\b`, 'g');
+            html = html.replace(regex, criteriaMap[criteria]);
+        });
+        
+        return html;
     }
 
     async getHint() {

@@ -295,6 +295,34 @@ button:disabled {
     margin: 5px 0;
 }
 
+/* Criteria status indicators */
+.criteria-status {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.9em;
+    margin-left: 8px;
+}
+
+.criteria-exemplary {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.criteria-meets {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.criteria-improvement {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
 .progress-bar {
     background: #e9ecef;
     border-radius: 20px;
