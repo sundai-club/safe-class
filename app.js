@@ -40,61 +40,10 @@ class SafeClassSimulation {
         this.scenarios = [
             {
                 id: 1,
-                title: "Playground Fight",
-                description: "Two students, Alex and Jordan, are having a heated argument that's escalating toward physical violence. Jordan just pushed Alex, and they're preparing to hit back. Other students are gathering around, some encouraging the fight.",
-                initialDialog: [
-                    { type: 'system', content: 'You notice the situation developing during recess supervision.' },
-                    { type: 'student', content: 'Jordan: "You can\'t tell me what to do! Mind your own business!"' },
-                    { type: 'student', content: 'Alex: "Don\'t you dare push me again! I\'ll make you sorry!"' }
-                ],
-                context: "This is a common playground conflict that needs immediate de-escalation before it becomes physical violence."
-            },
-            {
-                id: 2,
                 title: "History Class Fight",
-                description: "It is third period in a 10th-grade history class. You are midway through a lecture when two students, Alex and Jordan, begin arguing about their group project. The tension escalates quickly. Jordan pushes his chair back and walks across the room. Alex stands, ready to confront him. Within seconds, Jordan shoves Alex, and Alex swings a fist in response. The room erupts—students are shouting, some standing on chairs, a few pulling out their phones to record. Papers scatter, desks shift, and the atmosphere feels chaotic. You are at the front of the classroom. The fight is happening near the back, and your students are looking to you.",
-                initialDialog: [
-                    { type: 'system', content: 'You are midway through your history lecture when the argument begins.' },
-                    { type: 'student', content: 'Jordan: "You didn\'t even do your part. We had to cover for you."' },
-                    { type: 'student', content: 'Alex: "That\'s not true! At least I showed up—unlike you."' },
-                    { type: 'system', content: 'Jordan pushes his chair back and walks across the room. Alex stands up.' },
-                    { type: 'system', content: 'Jordan shoves Alex. Alex swings back. The room erupts in chaos.' },
-                    { type: 'student', content: 'Multiple students: "Fight! Fight!" "Someone record this!" "Oh my god!"' }
-                ],
+                description: "It is third period in a 10th-grade history class. You are midway through a lecture when two students, Alex and Jordan, begin arguing about their group project. Jordan (raising his voice): \"You didn't even do your part. We had to cover for you.\" Alex (snapping back): \"That's not true! At least I showed up—unlike you.\" The tension escalates quickly. Jordan pushes his chair back and walks across the room. Alex stands, ready to confront him. Within seconds, Jordan shoves Alex, and Alex swings a fist in response. The room erupts—students are shouting, some standing on chairs, a few pulling out their phones to record. Papers scatter, desks shift, and the atmosphere feels chaotic. You are at the front of the classroom. The fight is happening near the back, and your students are looking to you. What do you do next?",
+                initialDialog: [],
                 context: "A full physical altercation has erupted in your classroom during instruction. Students are recording, chaos has taken over, and immediate intervention is critical for safety."
-            },
-            {
-                id: 3,
-                title: "Cafeteria Incident",
-                description: "During lunch supervision, you notice Jordan deliberately knocking over another student's lunch tray and making threatening gestures. The victim, Alex, is visibly upset and other students are starting to take sides.",
-                initialDialog: [
-                    { type: 'system', content: 'You approach the cafeteria table where the incident occurred.' },
-                    { type: 'student', content: 'Jordan: "Oops, sorry about your lunch, Alex. Maybe next time watch where you\'re going."' },
-                    { type: 'student', content: 'Alex: "You did that on purpose! That was my only lunch!"' }
-                ],
-                context: "This appears to be bullying behavior that could escalate to physical confrontation."
-            },
-            {
-                id: 4,
-                title: "After-School Confrontation",
-                description: "You're supervising after-school activities when you see Jordan cornering Alex near the lockers, speaking in aggressive tones and making intimidating gestures. Alex looks scared and trapped.",
-                initialDialog: [
-                    { type: 'system', content: 'You witness this confrontation while walking down the hallway.' },
-                    { type: 'student', content: 'Jordan: "You better have my money tomorrow, or you\'ll regret it."' },
-                    { type: 'student', content: 'Alex: "I... I don\'t have it yet. My parents said..."' }
-                ],
-                context: "This appears to be a serious intimidation situation that could involve extortion and threats of violence."
-            },
-            {
-                id: 5,
-                title: "Group Conflict",
-                description: "During group work, tensions rise between two groups of students. Name-calling has started, and one student has stood up with clenched fists. The situation is rapidly escalating with multiple students involved.",
-                initialDialog: [
-                    { type: 'system', content: 'The classroom energy has shifted dramatically during what should be collaborative work.' },
-                    { type: 'student', content: 'Group 1 Leader: "Your group always cheats! We\'re tired of it!"' },
-                    { type: 'student', content: 'Group 2 Leader: "You\'re just mad because we\'re better than you!"' }
-                ],
-                context: "Multiple students are involved, making this a complex situation requiring careful management to prevent group violence."
             }
         ];
 
@@ -102,7 +51,7 @@ class SafeClassSimulation {
     }
 
 
-    startScenario(index) {
+    async startScenario(index) {
         if (index >= this.scenarios.length) {
             this.showCompletionSummary();
             return;
@@ -116,13 +65,80 @@ class SafeClassSimulation {
             <p>${scenario.description}</p>
         `;
 
-        this.dialogHistory = [...scenario.initialDialog];
+        // If no initial dialog exists, generate it using AI
+        if (scenario.initialDialog.length === 0) {
+            this.showLoading(true);
+            try {
+                await this.generateInitialDialog(scenario);
+            } catch (error) {
+                console.error('Error generating initial dialog:', error);
+                // Fallback to basic dialog
+                this.dialogHistory = [
+                    { type: 'system', content: 'The situation is unfolding in your classroom.' }
+                ];
+            }
+            this.showLoading(false);
+        } else {
+            this.dialogHistory = [...scenario.initialDialog];
+        }
+        
         this.renderDialog();
         
         this.teacherResponse.value = '';
         this.feedbackContent.textContent = 'Analyze the situation carefully. What would be your first response?';
         
         this.updateProgress();
+    }
+
+    async generateInitialDialog(scenario) {
+        const prompt = `Based on this classroom violence scenario, generate the initial dialog that sets up the situation for a teacher training simulation.
+
+SCENARIO: ${scenario.description}
+
+Generate 3-5 initial messages that show the progression from the start of the conflict to the current crisis moment. Include:
+1. A system message describing when you notice the situation
+2. 2-3 student dialog exchanges showing the escalation
+3. A final system message describing the current chaotic state
+
+Format each message as: TYPE: "content"
+Where TYPE is either "system" or "student"
+
+Example format:
+system: "You are midway through your history lecture when you notice tension building."
+student: "Jordan: 'You didn't even do your part. We had to cover for you.'"
+student: "Alex: 'That's not true! At least I showed up—unlike you.'"
+system: "The physical fight has erupted and chaos fills the classroom."
+
+Generate realistic dialog based on the scenario description:`;
+
+        const result = await this.callBackendAPI(prompt, 'dialog');
+        this.parseInitialDialog(result.response);
+    }
+
+    parseInitialDialog(dialogText) {
+        const lines = dialogText.split('\n').filter(line => line.trim());
+        this.dialogHistory = [];
+
+        lines.forEach(line => {
+            const match = line.match(/^(system|student):\s*"?([^"]*)"?$/i);
+            if (match) {
+                const type = match[1].toLowerCase();
+                const content = match[2].trim();
+                if (content) {
+                    this.dialogHistory.push({ type, content });
+                }
+            }
+        });
+
+        // Fallback if parsing failed
+        if (this.dialogHistory.length === 0) {
+            this.dialogHistory = [
+                { type: 'system', content: 'You notice the classroom situation developing.' },
+                { type: 'student', content: 'Jordan: "You didn\'t even do your part. We had to cover for you."' },
+                { type: 'student', content: 'Alex: "That\'s not true! At least I showed up—unlike you."' },
+                { type: 'system', content: 'The situation has escalated to physical violence.' }
+            ];
+        }
     }
 
     renderDialog() {
@@ -326,11 +342,8 @@ Provide ONE specific, actionable tip in 1-2 sentences. Be concise and focus on i
     }
 
     nextScenario() {
-        if (this.currentScenario < this.scenarios.length - 1) {
-            this.startScenario(this.currentScenario + 1);
-        } else {
-            this.showCompletionSummary();
-        }
+        // For continuous training with single scenario, restart the same scenario
+        this.startScenario(0);
     }
 
     showCompletionSummary() {
@@ -375,11 +388,11 @@ Provide ONE specific, actionable tip in 1-2 sentences. Be concise and focus on i
     }
 
     updateProgress() {
-        const completed = this.currentScenario + (this.scores.length > this.currentScenario ? 1 : 0);
-        const percentage = (completed / this.scenarios.length) * 100;
+        const responsesGiven = this.scores.length;
+        const percentage = Math.min((responsesGiven / 10) * 100, 100); // Progress based on responses given
         
         this.progressFill.style.width = `${percentage}%`;
-        this.scenariosCompleted.textContent = `${Math.min(completed, this.scenarios.length)}`;
+        this.scenariosCompleted.textContent = `${responsesGiven}`;
         
         if (this.scores.length > 0) {
             const average = (this.scores.reduce((sum, score) => sum + score, 0) / this.scores.length).toFixed(1);
