@@ -43,41 +43,28 @@ class SafeClassSimulation {
 
         // Audio record button event
         if (this.audioRecordButton) {
-            this.audioRecordButton.addEventListener('click', () => this.toggleAudioRecording());
-            // Cache the span for label updates
+            this.audioRecordButton.addEventListener('click', () => {
+                if (!this.isRecording) {
+                    this.startAudioRecording();
+                } else {
+                    this.stopAudioRecording();
+                }
+            });
             this.audioRecordLabel = this.audioRecordButton.querySelector('span');
         }
     }
 
-    toggleAudioRecording() {
+    startAudioRecording() {
         if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
             this.showMessage('Speech recognition is not supported in this browser.', 'error');
             return;
         }
-
         if (!this.speechRecognition) {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             this.speechRecognition = new SpeechRecognition();
             this.speechRecognition.lang = 'en-US';
             this.speechRecognition.interimResults = true;
             this.speechRecognition.maxAlternatives = 1;
-
-            this.speechRecognition.onstart = () => {
-                this.isRecording = true;
-                if (this.audioStatus) this.audioStatus.style.display = 'inline';
-            };
-            this.speechRecognition.onend = () => {
-                this.isRecording = false;
-                if (this.audioStatus) this.audioStatus.style.display = 'none';
-                if (this.teacherResponse.value.trim()) {
-                    this.handleSubmitResponse();
-                }
-            };
-            this.speechRecognition.onerror = (event) => {
-                this.isRecording = false;
-                if (this.audioStatus) this.audioStatus.style.display = 'none';
-                this.showMessage('Speech recognition error: ' + event.error, 'error');
-            };
             this.speechRecognition.onresult = (event) => {
                 let interimTranscript = '';
                 for (let i = event.resultIndex; i < event.results.length; ++i) {
@@ -85,14 +72,52 @@ class SafeClassSimulation {
                 }
                 this.teacherResponse.value = interimTranscript;
             };
+            this.speechRecognition.onerror = (event) => {
+                this.isRecording = false;
+                if (this.audioStatus) this.audioStatus.style.display = 'none';
+                this.setAudioButtonState(false);
+                this.showMessage('Speech recognition error: ' + event.error, 'error');
+            };
         }
+        this.isRecording = true;
+        if (this.audioStatus) this.audioStatus.style.display = 'inline';
+        this.setAudioButtonState(true);
+        this.speechRecognition.start();
+    }
 
-        if (!this.isRecording) {
-            this.speechRecognition.start();
-        } else {
+    stopAudioRecording() {
+        if (this.speechRecognition && this.isRecording) {
             this.speechRecognition.stop();
         }
+        this.isRecording = false;
+        if (this.audioStatus) this.audioStatus.style.display = 'none';
+        this.setAudioButtonState(false);
+        // Auto-submit after stopping
+        if (this.teacherResponse.value.trim()) {
+            this.handleSubmitResponse();
+        }
     }
+
+    setAudioButtonState(isRecording) {
+        if (this.audioRecordButton && this.audioRecordLabel) {
+            const iconSVG = this.audioRecordButton.querySelector('svg');
+            if (isRecording) {
+                this.audioRecordLabel.textContent = 'Stop';
+                if (iconSVG) {
+                    // Stop icon: filled square
+                    iconSVG.innerHTML = '<rect width="24" height="24" fill="none"/><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/>';
+                }
+            } else {
+                this.audioRecordLabel.textContent = 'Speak';
+                if (iconSVG) {
+                    // Microphone icon
+                    iconSVG.innerHTML = '<rect width="24" height="24" fill="none"/><path d="M12 16a4 4 0 0 0 4-4V7a4 4 0 1 0-8 0v5a4 4 0 0 0 4 4Zm5-4a1 1 0 1 1 2 0 7 7 0 0 1-6 6.92V21a1 1 0 1 1-2 0v-2.08A7 7 0 0 1 5 12a1 1 0 1 1 2 0 5 5 0 0 0 10 0Z" fill="currentColor"/>';
+                }
+            }
+        }
+    }
+
+    // removed toggleAudioRecording, replaced by startAudioRecording/stopAudioRecording
 
     loadScenarios() {
         this.scenarios = [
