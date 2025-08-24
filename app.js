@@ -250,9 +250,15 @@ Generate realistic dialog based on the scenario description:`;
     }
 
     addStudentMessage(message) {
-        // Check if the message contains multiple student responses in format [Name]: "quote"
-        const studentPattern = /\[([^\]]+)\]:\s*"([^"]+)"/g;
-        const matches = [...message.matchAll(studentPattern)];
+        // Check for multiple student responses in various formats:
+        // [Name]: "quote" OR Name: "quote"
+        const bracketPattern = /\[([^\]]+)\]:\s*"([^"]+)"/g;
+        const namePattern = /([A-Z][a-z]+):\s*"([^"]+)"/g;
+        
+        let matches = [...message.matchAll(bracketPattern)];
+        if (matches.length === 0) {
+            matches = [...message.matchAll(namePattern)];
+        }
         
         if (matches.length > 1) {
             // Multiple students - create separate bubbles
@@ -273,8 +279,25 @@ Generate realistic dialog based on the scenario description:`;
                 content: `${studentName}: "${studentQuote}"` 
             });
         } else {
-            // No specific format detected - use as is
-            this.dialogHistory.push({ type: 'student', content: message });
+            // Try to split by common patterns for unquoted responses
+            const lines = message.split(/(?=[A-Z][a-z]+:\s)/);
+            if (lines.length > 1 && lines[0].trim() === '') {
+                // Remove empty first element
+                lines.shift();
+            }
+            
+            if (lines.length > 1) {
+                // Multiple student responses without quotes
+                lines.forEach(line => {
+                    const trimmed = line.trim();
+                    if (trimmed) {
+                        this.dialogHistory.push({ type: 'student', content: trimmed });
+                    }
+                });
+            } else {
+                // No specific format detected - use as is
+                this.dialogHistory.push({ type: 'student', content: message });
+            }
         }
         
         this.renderDialog();
