@@ -149,13 +149,22 @@ class SafeClassSimulation {
     }
 
     async generateInitialDialog(scenario) {
-        const prompt = `Based on this classroom violence scenario, generate the initial dialog that sets up the situation for a teacher training simulation.
+        const prompt = `Based on this classroom violence scenario, generate initial dialog for a teacher training simulation featuring 10th-grade students (15-16 years old).
 
 SCENARIO: ${scenario.description}
 
-Generate 3-5 initial messages that show the progression from the start of the conflict to the current crisis moment. Include:
+Generate 3-5 initial messages showing the conflict progression. Use authentic Gen-Z language that's school-appropriate but reflects how teenagers actually speak:
+
+STUDENT LANGUAGE GUIDELINES:
+- Use casual contractions ("That's so..." "You're not gonna..." "I'm literally...")
+- Include mild expressions ("This is ridiculous" "Whatever" "Seriously?" "No cap")
+- Age-appropriate slang ("That's actually crazy" "For real?" "That's cap" "I'm done")
+- Natural speech patterns teens use when stressed or frustrated
+- Keep it realistic but school-appropriate
+
+Include:
 1. A system message describing when you notice the situation
-2. 2-3 student dialog exchanges showing the escalation
+2. 2-3 student dialog exchanges showing the escalation with authentic teen language
 3. A final system message describing the current chaotic state
 
 Format each message as: TYPE: "content"
@@ -163,11 +172,11 @@ Where TYPE is either "system" or "student"
 
 Example format:
 system: "You are midway through your history lecture when you notice tension building."
-student: "Jordan: 'You didn't even do your part. We had to cover for you.'"
-student: "Alex: 'That's not true! At least I showed up—unlike you.'"
+student: "Jordan: 'Bro, you literally didn't do anything for our project. That's so unfair.'"
+student: "Alex: 'That's cap! I showed up way more than you did, for real.'"
 system: "The physical fight has erupted and chaos fills the classroom."
 
-Generate realistic dialog based on the scenario description:`;
+Generate realistic dialog with authentic 10th-grade language:`;
 
         const result = await this.callBackendAPI(prompt, 'dialog');
         this.parseInitialDialog(result.response);
@@ -338,7 +347,7 @@ Format: SCORE: [number]/10 - [feedback]
         const dialogContext = this.dialogHistory.slice(0, -1).map(msg => msg.content).join('\n');
         
         const prompt = `
-You are role-playing as the students in this classroom violence scenario. 
+You are role-playing as 10th-grade students (15-16 years old) in this classroom violence scenario. Use authentic Gen-Z language that's appropriate for school but reflects how teenagers actually speak today.
 
 SCENARIO: ${scenario.title}
 DESCRIPTION: ${scenario.description}
@@ -348,11 +357,17 @@ ${dialogContext}
 
 The teacher just said: "${teacherResponse}"
 
-Generate a realistic response from the students involved. Consider:
+Generate realistic responses from the students involved. Use natural 10th-grade language including:
+- Casual contractions ("That's so..." "I'm not gonna..." "He's being...")
+- Mild expressions of frustration ("This is ridiculous" "Whatever" "Seriously?")
+- Age-appropriate slang ("That's cap" "No way" "For real?" "That's actually crazy")
+- Natural speech patterns teens use when stressed or emotional
+
+Consider:
 - Are they calming down or still agitated?
 - How would they realistically react to this teacher approach?
-- Keep responses authentic to the age group and situation
-- One sentence from the main student(s) involved
+- Keep it school-appropriate but authentic to how 15-16 year olds actually talk
+- 1-2 sentences from the main students involved
 
 Response format: [Student name]: "[response]"
         `;
