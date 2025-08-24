@@ -494,14 +494,14 @@ Response format: [Student name]: "[response]"
         // First apply markdown parsing
         let html = this.parseMarkdown(feedback);
         
-        // Add color-coded status indicators for criteria evaluations
+        // Add traffic light indicators for criteria evaluations
         const criteriaMap = {
-            'EXEMPLARY': '<span class="criteria-status criteria-exemplary">● EXEMPLARY</span>',
-            'MEETS EXPECTATIONS': '<span class="criteria-status criteria-meets">● MEETS EXPECTATIONS</span>',
-            'ROOM FOR IMPROVEMENT': '<span class="criteria-status criteria-improvement">● ROOM FOR IMPROVEMENT</span>'
+            'EXEMPLARY': '<span class="traffic-light traffic-green" title="EXEMPLARY - Exceeds professional standards"></span>',
+            'MEETS EXPECTATIONS': '<span class="traffic-light traffic-yellow" title="MEETS EXPECTATIONS - Adequate performance"></span>',
+            'ROOM FOR IMPROVEMENT': '<span class="traffic-light traffic-red" title="ROOM FOR IMPROVEMENT - Needs development"></span>'
         };
         
-        // Replace criteria evaluations with color-coded versions
+        // Replace criteria evaluations with traffic light indicators
         Object.keys(criteriaMap).forEach(criteria => {
             const regex = new RegExp(`\\b${criteria}\\b`, 'g');
             html = html.replace(regex, criteriaMap[criteria]);
