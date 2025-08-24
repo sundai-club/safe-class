@@ -390,9 +390,16 @@ Format your response exactly like this:
 4. **Adherence to Policy & Ethical Standards:** [EXEMPLARY/MEETS EXPECTATIONS/ROOM FOR IMPROVEMENT]
 5. **Professionalism & Emotional Regulation:** [EXEMPLARY/MEETS EXPECTATIONS/ROOM FOR IMPROVEMENT]
 
-**OVERALL SCORE:** [number]/10
+**OVERALL SCORE:** [percentage]%
 
 **FEEDBACK:** [2-3 sentences of specific, actionable feedback]
+
+For scoring, assign points to each criterion:
+- EXEMPLARY = 20 points
+- MEETS EXPECTATIONS = 15 points  
+- ROOM FOR IMPROVEMENT = 10 points
+
+Sum all 5 criteria scores for the overall percentage (out of 100%).
         `;
 
         return await this.callBackendAPI(prompt, 'feedback');
@@ -473,14 +480,14 @@ Response format: [Student name]: "[response]"
         const enhancedFeedback = this.processCriteriaFeedback(feedback);
         this.feedbackContent.innerHTML = enhancedFeedback;
         
-        const scoreMatch = feedback.match(/OVERALL SCORE:\s*(\d+)|SCORE:\s*(\d+)/i);
+        const scoreMatch = feedback.match(/OVERALL SCORE:\s*(\d+)%|SCORE:\s*(\d+)/i);
         if (scoreMatch) {
             const score = parseInt(scoreMatch[1] || scoreMatch[2]);
             this.scores.push(score);
             
-            if (score >= 8) {
+            if (score >= 80) {
                 this.feedbackContent.className = 'feedback-positive';
-            } else if (score >= 6) {
+            } else if (score >= 60) {
                 this.feedbackContent.className = 'feedback-neutral';
             } else {
                 this.feedbackContent.className = 'feedback-negative';
@@ -548,7 +555,7 @@ Provide ONE specific, actionable tip in 1-2 sentences. Be concise and focus on i
                 <h5>Final Results:</h5>
                 <ul>
                     <li>Scenarios Completed: ${this.scenarios.length}</li>
-                    <li>Average Score: ${averageScore}/10</li>
+                    <li>Average Score: ${averageScore}%</li>
                     <li>Performance: ${this.getPerformanceLevel(averageScore)}</li>
                 </ul>
             </div>
@@ -571,10 +578,10 @@ Provide ONE specific, actionable tip in 1-2 sentences. Be concise and focus on i
     }
 
     getPerformanceLevel(score) {
-        if (score >= 9) return 'Excellent 🌟';
-        if (score >= 8) return 'Very Good 👍';
-        if (score >= 7) return 'Good ✅';
-        if (score >= 6) return 'Satisfactory 📝';
+        if (score >= 90) return 'Excellent 🌟';
+        if (score >= 80) return 'Very Good 👍';
+        if (score >= 70) return 'Good ✅';
+        if (score >= 60) return 'Satisfactory 📝';
         return 'Needs Improvement 📚';
     }
 
@@ -586,8 +593,8 @@ Provide ONE specific, actionable tip in 1-2 sentences. Be concise and focus on i
         this.scenariosCompleted.textContent = `${responsesGiven}`;
         
         if (this.scores.length > 0) {
-            const average = (this.scores.reduce((sum, score) => sum + score, 0) / this.scores.length).toFixed(1);
-            this.averageScore.textContent = `${average}`;
+            const average = (this.scores.reduce((sum, score) => sum + score, 0) / this.scores.length).toFixed(0);
+            this.averageScore.textContent = `${average}%`;
         }
     }
 
