@@ -475,7 +475,8 @@ MAIN CHARACTERS (always respond):
 - Alex and Jordan (the students in conflict)
 
 SECONDARY STUDENTS (sometimes respond - about 30% chance):
-- Other classmates who might react: worried students, bystanders, friends taking sides
+- Sarah: worried classmate trying to help or defuse tension
+- Peter: bystander who might comment on the situation
 
 Response guidelines:
 - Use authentic Gen-Z language but school-appropriate
@@ -487,10 +488,10 @@ Response guidelines:
 Response format examples:
 [Alex]: "That's not what happened though!"
 [Jordan]: "Whatever, I'm done with this."
-[Maya]: "Can we just focus on the presentation?"
-[Student]: "This is getting weird..."
+[Sarah]: "Can we just focus on the presentation?"
+[Peter]: "This is getting weird..."
 
-Generate responses from Alex and Jordan, plus 1-2 secondary students if it feels natural for the situation.
+Generate responses from Alex and Jordan, plus occasionally Sarah or Peter if it feels natural for the situation.
         `;
 
         return await this.callBackendAPI(prompt, 'student');
