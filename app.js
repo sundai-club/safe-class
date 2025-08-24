@@ -459,7 +459,7 @@ Sum all 5 criteria scores for the overall percentage (out of 100%).
         const dialogContext = this.dialogHistory.slice(0, -1).map(msg => msg.content).join('\n');
         
         const prompt = `
-You are Alex and Jordan, two 10th-grade students (15-16 years old) in a classroom conflict. Respond to the teacher's intervention with realistic reactions.
+You are simulating a realistic 10th-grade classroom during a conflict situation. Generate authentic student responses to the teacher's intervention.
 
 SCENARIO: ${scenario.title}
 DESCRIPTION: ${scenario.description}
@@ -469,16 +469,28 @@ ${dialogContext}
 
 The teacher just said: "${teacherResponse}"
 
-Generate one realistic response from ONLY Alex OR Jordan (not both, just one of them). The response should:
-- Be 1-2 sentences maximum
-- Use natural teenage language but school-appropriate
-- Show how a 15-16 year old would actually react to the teacher's words
-- Include casual contractions and mild expressions when frustrated
-- Reflect whether they're defensive, apologetic, still angry, or calming down
+Generate 2-4 realistic student responses. Include:
 
-Choose either Alex or Jordan to respond based on who would most naturally react to what the teacher said.
+MAIN CHARACTERS (always respond):
+- Alex and Jordan (the students in conflict)
 
-Response format: [Alex]: "[response]" OR [Jordan]: "[response]" (pick one)
+SECONDARY STUDENTS (sometimes respond - about 30% chance):
+- Other classmates who might react: worried students, bystanders, friends taking sides
+
+Response guidelines:
+- Use authentic Gen-Z language but school-appropriate
+- 1-2 sentences per student maximum
+- Show realistic teenage reactions: defensive, supportive, concerned, trying to help
+- Include casual contractions and natural speech patterns
+- Reflect the classroom dynamic - not everyone speaks at once
+
+Response format examples:
+[Alex]: "That's not what happened though!"
+[Jordan]: "Whatever, I'm done with this."
+[Maya]: "Can we just focus on the presentation?"
+[Student]: "This is getting weird..."
+
+Generate responses from Alex and Jordan, plus 1-2 secondary students if it feels natural for the situation.
         `;
 
         return await this.callBackendAPI(prompt, 'student');
