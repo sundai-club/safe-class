@@ -176,7 +176,33 @@ class SafeClassSimulation {
     }
 
     addStudentMessage(message) {
-        this.dialogHistory.push({ type: 'student', content: message });
+        // Check if the message contains multiple student responses in format [Name]: "quote"
+        const studentPattern = /\[([^\]]+)\]:\s*"([^"]+)"/g;
+        const matches = [...message.matchAll(studentPattern)];
+        
+        if (matches.length > 1) {
+            // Multiple students - create separate bubbles
+            matches.forEach(match => {
+                const studentName = match[1];
+                const studentQuote = match[2];
+                this.dialogHistory.push({ 
+                    type: 'student', 
+                    content: `${studentName}: "${studentQuote}"` 
+                });
+            });
+        } else if (matches.length === 1) {
+            // Single student with proper format
+            const studentName = matches[0][1];
+            const studentQuote = matches[0][2];
+            this.dialogHistory.push({ 
+                type: 'student', 
+                content: `${studentName}: "${studentQuote}"` 
+            });
+        } else {
+            // No specific format detected - use as is
+            this.dialogHistory.push({ type: 'student', content: message });
+        }
+        
         this.renderDialog();
     }
 
